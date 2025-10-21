@@ -44,8 +44,8 @@ public class PlayerController2D : MonoBehaviour
         }
 
         // Voltear sprite según dirección
-        if (moveInput > 0) transform.localScale = new Vector3(-1, 1, 1);
-        else if (moveInput < 0) transform.localScale = new Vector3(1, 1, 1);
+        if (moveInput > 0) transform.localScale = new Vector3(1, 1, 1);
+        else if (moveInput < 0) transform.localScale = new Vector3(-1, 1, 1);
     }
 
     void HandleJump()
