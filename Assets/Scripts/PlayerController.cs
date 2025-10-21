@@ -1,93 +1,94 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController2D : MonoBehaviour
 {
+    [Header("Movimiento")]
+    public float moveSpeed = 12f;       // Velocidad horizontal
+    public float jumpForce = 12f;       // Fuerza del salto
+    public float fallMultiplier = 20f;   // Caída más rápida
+    public float moveAcceleration = 50f; // Fuerza para movimiento más responsivo
 
-    // Configuración del movimiento
-    public float moveSpeed = 5f; // Velocidad del movimiento
-    public float jumpForce = 10f; // Fuerza del salto
-    private float moveInput; // Entrada horizontal (izquierda/derecha)
-    private bool isGrounded; // Si está tocando el suelo
+    private float moveInput;
+    private bool isGrounded;
+    private int jumpCount;
 
-    // Componentes del jugador
     private Rigidbody2D rb;
-    private BoxCollider2D coll;
-    private Animator anim; // Referencia al Animator
+    private Animator anim;
 
-    // Capa para comprobar si está en el suelo
-    public LayerMask groundMask;
-
-    // Parámetros del Animator
-    private static readonly int IsWalking = Animator.StringToHash("IsWalking");
-    private static readonly int IsJumping = Animator.StringToHash("IsJumping");
-
-
-    // Start is called before the first frame update
     void Start()
     {
-        // Obtener los componentes del jugador
         rb = GetComponent<Rigidbody2D>();
-        coll = GetComponent<BoxCollider2D>();
-        anim = GetComponent<Animator>(); // Obtener el componente Animator
+        anim = GetComponentInChildren<Animator>();
+        jumpCount = 0;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Llamar a la función para chequear si está tocando el suelo
-        isGrounded = Physics2D.IsTouchingLayers(coll, groundMask);
-
-        // Llamar a las funciones de movimiento y salto
         HandleMovement();
         HandleJump();
+        HandleBetterFall();
         HandleAnimations();
     }
 
     void HandleMovement()
     {
-        // Obtener la entrada del jugador (A/D o las flechas de dirección)
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // Movimiento horizontal
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        // Aplicar fuerza para movimiento sensible, incluso con valores altos
+        rb.AddForce(new Vector2(moveInput * moveAcceleration, 0));
+
+        // Limitar velocidad horizontal a moveSpeed
+        if (Mathf.Abs(rb.velocity.x) > moveSpeed)
+        {
+            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * moveSpeed, rb.velocity.y);
+        }
+
+        // Voltear sprite según dirección
+        if (moveInput > 0) transform.localScale = new Vector3(-1, 1, 1);
+        else if (moveInput < 0) transform.localScale = new Vector3(1, 1, 1);
     }
 
     void HandleJump()
     {
-        // Si el jugador presiona la tecla de salto (por ejemplo, espacio) y está tocando el suelo
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 2)
         {
-            // Agregar una fuerza hacia arriba para hacer el salto
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jumpCount++;
+        }
+    }
+
+    void HandleBetterFall()
+    {
+        if (rb.velocity.y < 0)
+        {
+            rb.velocity += new Vector2(0, Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime);
         }
     }
 
     void HandleAnimations()
     {
-        // Controlar las animaciones de movimiento
-        if (moveInput != 0)
-        {
-            // El jugador se está moviendo, activamos la animación de caminar
-            anim.SetBool(IsWalking, true);
-        }
-        else
-        {
-            // El jugador no se está moviendo, desactivamos la animación de caminar
-            anim.SetBool(IsWalking, false);
-        }
+        // Solo caminar en el suelo
+        bool walking = moveInput != 0 && isGrounded;
+        bool jumping = !isGrounded;
 
-        // Controlar la animación de salto
-        if (!isGrounded)
+        anim.SetBool("IsWalking", walking);
+        anim.SetBool("IsJumping", jumping);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Suelo"))
         {
-            // El jugador está en el aire (saltando)
-            anim.SetBool(IsJumping, true);
+            isGrounded = true;
+            jumpCount = 0; // Resetear saltos al tocar el suelo
         }
-        else
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Suelo"))
         {
-            // El jugador está tocando el suelo
-            anim.SetBool(IsJumping, false);
+            isGrounded = false;
         }
     }
 }
