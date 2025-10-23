@@ -4,9 +4,11 @@ using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
+    [Header("Personajes")]
     public Character player;
     public Character enemy;
 
+    [Header("UI")]
     public Slider playerHealthBar;
     public Slider enemyHealthBar;
     public Text battleText;
@@ -17,11 +19,14 @@ public class BattleManager : MonoBehaviour
     private bool actionChosen = false;
     private int chosenSkillIndex = -1;
 
-    private void Start()
+    void Start()
     {
+        // Configurar barras de vida
         playerHealthBar.maxValue = player.maxHealth;
         enemyHealthBar.maxValue = enemy.maxHealth;
         UpdateUI();
+
+        // Iniciar batalla
         StartCoroutine(BattleLoop());
     }
 
@@ -42,7 +47,7 @@ public class BattleManager : MonoBehaviour
             }
 
             UpdateUI();
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
 
             if (player.IsDead() || enemy.IsDead())
             {
@@ -53,26 +58,27 @@ public class BattleManager : MonoBehaviour
             {
                 playerTurn = !playerTurn;
             }
-
-            yield return null;
         }
     }
 
     private IEnumerator PlayerTurn()
     {
         battleText.text = "Turno del jugador";
+
+        // Resetear elección
         actionChosen = false;
         chosenSkillIndex = -1;
 
-        // Mostrar botones para que el jugador elija acción
+        // Mostrar botones
         actionPanel.SetActive(true);
 
-        // Espera hasta que el jugador elija
+        // Esperar a que el jugador elija acción
         while (!actionChosen)
         {
             yield return null;
         }
 
+        // Ocultar botones
         actionPanel.SetActive(false);
 
         // Ejecutar acción elegida
@@ -81,7 +87,7 @@ public class BattleManager : MonoBehaviour
         if (chosenSkill.isHealing)
         {
             player.UseSkill(chosenSkillIndex, null);
-            battleText.text = $"Jugador usa {chosenSkill.skillName} y se cura {chosenSkill.power}";
+            battleText.text = $"Jugador usa {chosenSkill.skillName} y se cura {chosenSkill.power} puntos";
         }
         else
         {
@@ -97,17 +103,17 @@ public class BattleManager : MonoBehaviour
         battleText.text = "Turno del enemigo";
         yield return new WaitForSeconds(1f);
 
-        // El enemigo tiene 20% de probabilidad de curarse
-        bool willHeal = Random.value < 0.2f && enemy.currentHealth < enemy.maxHealth;
+        // El enemigo puede curarse si tiene menos del 50% de vida (30% de probabilidad)
+        bool willHeal = Random.value < 0.3f && enemy.currentHealth < enemy.maxHealth / 2;
 
         if (willHeal)
         {
             enemy.Heal(15);
-            battleText.text = $"Enemigo se cura 15 puntos";
+            battleText.text = $"Enemigo se cura 15 puntos de vida";
         }
         else
         {
-            int damage = enemy.skills[0].power; // ataque básico
+            int damage = enemy.skills[0].power; // Ataque básico
             player.TakeDamage(damage);
             battleText.text = $"Enemigo ataca e inflige {damage} de daño";
         }
@@ -121,16 +127,18 @@ public class BattleManager : MonoBehaviour
         enemyHealthBar.value = enemy.currentHealth;
     }
 
-    // Estos métodos se conectan a los botones
+    // =======================
+    // Métodos para los botones
+    // =======================
     public void OnAttackButton()
     {
-        chosenSkillIndex = 0; // asumimos skill[0] = ataque
+        chosenSkillIndex = 0; // Skill[0] = Ataque
         actionChosen = true;
     }
 
     public void OnHealButton()
     {
-        chosenSkillIndex = 1; // asumimos skill[1] = curación
+        chosenSkillIndex = 1; // Skill[1] = Curación
         actionChosen = true;
     }
 }
