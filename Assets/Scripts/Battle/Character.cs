@@ -12,7 +12,6 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
-        // Solo inicializar si no hay datos guardados
         if (currentHealth <= 0)
             currentHealth = maxHealth;
     }

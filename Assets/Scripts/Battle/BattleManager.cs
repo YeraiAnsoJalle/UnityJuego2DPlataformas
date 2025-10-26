@@ -7,7 +7,7 @@ public class BattleManager : MonoBehaviour
 {
     [Header("Personajes")]
     public Character player;
-    public Character enemy; // Este será el prefab base
+    public Character enemy;
 
     [Header("UI")]
     public Slider playerHealthBar;
@@ -25,34 +25,22 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        // Cargar vida del jugador desde datos guardados
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBattleMusic();
+        }
+
         if (PlayerData.currentHealth > 0)
         {
             player.currentHealth = PlayerData.currentHealth;
         }
 
-        // CREAR ENEMIGO DINÁMICO basado en BattleData
-        CreateDynamicEnemy();
-
-        // Configurar UI
-        playerHealthBar.maxValue = player.maxHealth;
-        enemyHealthBar.maxValue = enemy.maxHealth;
-        UpdateUI();
-
-        battleText.text = "¡Comienza la batalla!";
-        StartCoroutine(BattleLoop());
-    }
-
-    void CreateDynamicEnemy()
-    {
         if (BattleData.enemyToLoad != null)
         {
-            // Configurar el enemigo con los datos cargados
             enemy.fighterName = BattleData.enemyToLoad.name;
             enemy.maxHealth = BattleData.enemyToLoad.maxHealth;
             enemy.currentHealth = BattleData.enemyToLoad.maxHealth;
 
-            // Añadir skill de ataque básico
             if (enemy.skills.Count == 0)
             {
                 enemy.skills.Add(new Skill
@@ -69,9 +57,15 @@ public class BattleManager : MonoBehaviour
         {
             Debug.LogError("No hay datos de enemigo para cargar en la batalla");
         }
+
+        playerHealthBar.maxValue = player.maxHealth;
+        enemyHealthBar.maxValue = enemy.maxHealth;
+        UpdateUI();
+
+        battleText.text = "¡Comienza la batalla!";
+        StartCoroutine(BattleLoop());
     }
 
-    // ... (el resto del código del BattleManager se mantiene igual)
     private IEnumerator BattleLoop()
     {
         yield return new WaitForSeconds(1f);
@@ -132,10 +126,9 @@ public class BattleManager : MonoBehaviour
         battleText.text = "Turno del enemigo";
         yield return new WaitForSeconds(1f);
 
-        // Usar la skill del enemigo (normalmente ataque básico)
         if (enemy.skills.Count > 0)
         {
-            Skill enemySkill = enemy.skills[0]; // Primera skill (ataque)
+            Skill enemySkill = enemy.skills[0];
             enemy.UseSkill(0, player);
             battleText.text = $"{enemy.fighterName} usa {enemySkill.skillName} e inflige {enemySkill.power} de daño";
         }
@@ -155,17 +148,25 @@ public class BattleManager : MonoBehaviour
         {
             battleText.text = "¡Has ganado!";
             BattleSessionData.defeatedEnemies.Add(BattleData.enemyToLoad.uniqueID);
+
+            PlayerData.currentHealth = player.currentHealth;
+            yield return new WaitForSeconds(2f);
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayGameMusic();
+            }
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.LoadScene("Juego");
         }
-        else
+        else if (state == BattleState.LOST)
         {
             battleText.text = "Has sido derrotado...";
+            yield return new WaitForSeconds(2f);
+
+            SceneManager.LoadScene("GameOver");
         }
-
-        PlayerData.currentHealth = player.currentHealth;
-        yield return new WaitForSeconds(2f);
-
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.LoadScene("Juego");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

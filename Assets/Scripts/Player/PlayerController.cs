@@ -1,45 +1,60 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
-    public float moveSpeed = 12f;
-    public float jumpForce = 12f;
-    public float fallMultiplier = 3f;
-    public float lowJumpMultiplier = 2f;
+    public float moveSpeed = 60f;
+    public float jumpForce = 8f;
+
+    [Header("Componentes")]
+    public Animator anim;
+
+    [Header("Muerte")]
+    public float killYPosition = -30f;
 
     private float moveInput;
     private bool isGrounded;
     private int jumpCount;
-
     private Rigidbody2D rb;
-    private Animator anim;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponentInChildren<Animator>();
+
+        if (anim == null)
+            anim = GetComponentInChildren<Animator>();
+
         jumpCount = 0;
     }
 
     void Update()
     {
-        HandleMovement();
+        HandleInput();
         HandleJump();
-        HandleBetterJump();
         HandleAnimations();
+        CheckDeathByFall();
+    }
+
+    void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
+    void HandleInput()
+    {
+        moveInput = Input.GetAxisRaw("Horizontal");
     }
 
     void HandleMovement()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
-        rb.AddForce(new Vector2(moveInput * 50f, 0));
+        Vector2 movement = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        rb.velocity = movement;
 
-        if (Mathf.Abs(rb.velocity.x) > moveSpeed)
-            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * moveSpeed, rb.velocity.y);
-
-        if (moveInput > 0) transform.localScale = new Vector3(1, 1, 1);
-        else if (moveInput < 0) transform.localScale = new Vector3(-1, 1, 1);
+        if (moveInput > 0)
+            transform.localScale = new Vector3(1, 1, 1);
+        else if (moveInput < 0)
+            transform.localScale = new Vector3(-1, 1, 1);
     }
 
     void HandleJump()
@@ -51,25 +66,41 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleBetterJump()
+    void HandleAnimations()
     {
-        if (rb.velocity.y < 0)
+        if (anim != null)
         {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        }
-        else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-        {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+            bool walking = moveInput != 0 && isGrounded;
+            bool jumping = !isGrounded;
+
+            anim.SetBool("IsWalking", walking);
+            anim.SetBool("IsJumping", jumping);
         }
     }
 
-    void HandleAnimations()
+    void CheckDeathByFall()
     {
-        bool walking = moveInput != 0 && isGrounded;
-        bool jumping = !isGrounded;
+        if (transform.position.y < killYPosition)
+        {
+            Debug.Log("¡Jugador cayó al vacío!");
+            Die("Has caído al vacío");
+        }
+    }
 
-        anim.SetBool("IsWalking", walking);
-        anim.SetBool("IsJumping", jumping);
+    public void Die(string deathReason = "Has muerto")
+    {
+        Debug.Log($"Muerte del jugador: {deathReason}");
+        PlayerData.currentHealth = 0;
+        SceneManager.LoadScene("GameOver");
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("InstantDeath"))
+        {
+            Debug.Log("¡Muerte instantánea!");
+            Die("Muerte instantánea");
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -85,5 +116,22 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Suelo"))
             isGrounded = false;
+    }
+
+    public void TakeEnvironmentalDamage(int damage, string damageSource = "peligro ambiental")
+    {
+        if (PlayerData.currentHealth > 0)
+        {
+            PlayerData.currentHealth -= damage;
+            if (PlayerData.currentHealth < 0)
+                PlayerData.currentHealth = 0;
+
+            Debug.Log($"Daño de {damageSource}: -{damage} HP. Vida restante: {PlayerData.currentHealth}");
+
+            if (PlayerData.currentHealth <= 0)
+            {
+                Die($"Muerto por {damageSource}");
+            }
+        }
     }
 }

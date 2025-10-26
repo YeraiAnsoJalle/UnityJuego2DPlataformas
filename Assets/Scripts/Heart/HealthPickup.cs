@@ -34,12 +34,10 @@ public class HealthPickup : MonoBehaviour
     {
         collected = true;
 
-        // Buscar el componente Character de diferentes maneras
         Character playerCharacter = playerObj.GetComponent<Character>();
 
         if (playerCharacter == null)
         {
-            // Intentar buscar en hijos
             playerCharacter = playerObj.GetComponentInChildren<Character>();
         }
 
@@ -49,17 +47,14 @@ public class HealthPickup : MonoBehaviour
             return;
         }
 
-        // Curar al jugador
         int healthBefore = playerCharacter.currentHealth;
         playerCharacter.Heal(healAmount);
         int actualHeal = playerCharacter.currentHealth - healthBefore;
 
-        // Actualizar PlayerData
         PlayerData.currentHealth = playerCharacter.currentHealth;
 
         Debug.Log($"Jugador curado: {healthBefore} → {playerCharacter.currentHealth} (+{actualHeal} HP)");
 
-        // Efecto visual
         if (pickupEffectPrefab != null)
         {
             Instantiate(pickupEffectPrefab, transform.position, Quaternion.identity);
@@ -69,7 +64,6 @@ public class HealthPickup : MonoBehaviour
             CreateSimpleEffect();
         }
 
-        // Sonido
         if (pickupSound != null)
         {
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
@@ -79,17 +73,14 @@ public class HealthPickup : MonoBehaviour
             PlaySimpleSound();
         }
 
-        // Guardar en manager si tiene ID único
         if (!string.IsNullOrEmpty(uniqueID))
         {
             HealthPickupManager.RegisterPickupCollected(uniqueID);
         }
 
-        // Ocultar y destruir el pickup
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
 
-        // Si tiene hijos (como iconos), también ocultarlos
         foreach (Transform child in transform)
         {
             SpriteRenderer childRenderer = child.GetComponent<SpriteRenderer>();
