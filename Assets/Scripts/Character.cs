@@ -1,14 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
+[System.Serializable]
 public class Character : MonoBehaviour
 {
-    public string characterName;
+    [Header("Datos del personaje")]
+    public string fighterName; // 🔹 <---- añade esta línea
     public int maxHealth = 100;
     public int currentHealth;
+    public List<Skill> skills = new List<Skill>();
 
-    public Skill[] skills;
-
-    private void Awake()
+    private void Start()
     {
         currentHealth = maxHealth;
     }
@@ -25,26 +27,23 @@ public class Character : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
     }
 
-    public bool IsDead()
-    {
-        return currentHealth <= 0;
-    }
-
     public void UseSkill(int index, Character target)
     {
-        if (index < 0 || index >= skills.Length) return;
-
+        if (index < 0 || index >= skills.Count) return;
         Skill skill = skills[index];
 
         if (skill.isHealing)
         {
             Heal(skill.power);
-            Debug.Log($"{characterName} usa {skill.skillName} y se cura {skill.power}");
         }
-        else
+        else if (target != null)
         {
             target.TakeDamage(skill.power);
-            Debug.Log($"{characterName} usa {skill.skillName} e inflige {skill.power} de da�o");
         }
+    }
+
+    public bool IsDead()
+    {
+        return currentHealth <= 0;
     }
 }

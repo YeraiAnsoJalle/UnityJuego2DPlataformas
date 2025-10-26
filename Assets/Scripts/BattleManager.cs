@@ -1,5 +1,6 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class BattleManager : MonoBehaviour
@@ -19,6 +20,9 @@ public class BattleManager : MonoBehaviour
     private bool actionChosen = false;
     private int chosenSkillIndex = -1;
 
+    private enum BattleState { PLAYERTURN, ENEMYTURN, WON, LOST }
+    private BattleState state;
+
     void Start()
     {
         // Configurar barras de vida
@@ -26,25 +30,20 @@ public class BattleManager : MonoBehaviour
         enemyHealthBar.maxValue = enemy.maxHealth;
         UpdateUI();
 
-        // Iniciar batalla
+        battleText.text = "Â¡Comienza la batalla!";
         StartCoroutine(BattleLoop());
     }
 
     private IEnumerator BattleLoop()
     {
-        battleText.text = "¡Comienza la batalla!";
         yield return new WaitForSeconds(1f);
 
         while (!battleOver)
         {
             if (playerTurn)
-            {
                 yield return PlayerTurn();
-            }
             else
-            {
                 yield return EnemyTurn();
-            }
 
             UpdateUI();
             yield return new WaitForSeconds(0.5f);
@@ -52,7 +51,8 @@ public class BattleManager : MonoBehaviour
             if (player.IsDead() || enemy.IsDead())
             {
                 battleOver = true;
-                battleText.text = player.IsDead() ? "¡Has perdido!" : "¡Has ganado!";
+                state = player.IsDead() ? BattleState.LOST : BattleState.WON;
+                EndBattle();
             }
             else
             {
@@ -64,24 +64,15 @@ public class BattleManager : MonoBehaviour
     private IEnumerator PlayerTurn()
     {
         battleText.text = "Turno del jugador";
-
-        // Resetear elección
         actionChosen = false;
         chosenSkillIndex = -1;
-
-        // Mostrar botones
         actionPanel.SetActive(true);
 
-        // Esperar a que el jugador elija acción
         while (!actionChosen)
-        {
             yield return null;
-        }
 
-        // Ocultar botones
         actionPanel.SetActive(false);
 
-        // Ejecutar acción elegida
         Skill chosenSkill = player.skills[chosenSkillIndex];
 
         if (chosenSkill.isHealing)
@@ -92,7 +83,7 @@ public class BattleManager : MonoBehaviour
         else
         {
             player.UseSkill(chosenSkillIndex, enemy);
-            battleText.text = $"Jugador usa {chosenSkill.skillName} e inflige {chosenSkill.power} de daño";
+            battleText.text = $"Jugador usa {chosenSkill.skillName} e inflige {chosenSkill.power} de daÃ±o";
         }
 
         yield return new WaitForSeconds(1f);
@@ -103,7 +94,6 @@ public class BattleManager : MonoBehaviour
         battleText.text = "Turno del enemigo";
         yield return new WaitForSeconds(1f);
 
-        // El enemigo puede curarse si tiene menos del 50% de vida (30% de probabilidad)
         bool willHeal = Random.value < 0.3f && enemy.currentHealth < enemy.maxHealth / 2;
 
         if (willHeal)
@@ -113,9 +103,9 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            int damage = enemy.skills[0].power; // Ataque básico
+            int damage = enemy.skills[0].power;
             player.TakeDamage(damage);
-            battleText.text = $"Enemigo ataca e inflige {damage} de daño";
+            battleText.text = $"Enemigo ataca e inflige {damage} de daÃ±o";
         }
 
         yield return new WaitForSeconds(1f);
@@ -128,17 +118,59 @@ public class BattleManager : MonoBehaviour
     }
 
     // =======================
-    // Métodos para los botones
+    // Fin de la batalla
+    // =======================
+    private void EndBattle()
+    {
+        if (state == BattleState.WON)
+        {
+            battleText.text = "Â¡Has ganado!";
+
+            // âœ… Guardar enemigo como derrotado en esta sesiÃ³n
+            if (BattleData.enemyToLoad != null && !string.IsNullOrEmpty(BattleData.enemyToLoad.uniqueID))
+            {
+                BattleSessionData.defeatedEnemies.Add(BattleData.enemyToLoad.uniqueID);
+            }
+        }
+        else if (state == BattleState.LOST)
+        {
+            battleText.text = "Has sido derrotado...";
+        }
+
+        StartCoroutine(ReturnToMap());
+    }
+
+    private IEnumerator ReturnToMap()
+    {
+        yield return new WaitForSeconds(2f);
+
+        SceneManager.LoadScene("Juego"); // tu escena del mapa
+        SceneLoader.OnSceneLoaded += RestorePlayerPosition;
+    }
+
+    private void RestorePlayerPosition()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            playerObj.transform.position = PlayerPositionManager.lastPosition;
+        }
+
+        SceneLoader.OnSceneLoaded -= RestorePlayerPosition;
+    }
+
+    // =======================
+    // Botones
     // =======================
     public void OnAttackButton()
     {
-        chosenSkillIndex = 0; // Skill[0] = Ataque
+        chosenSkillIndex = 0;
         actionChosen = true;
     }
 
     public void OnHealButton()
     {
-        chosenSkillIndex = 1; // Skill[1] = Curación
+        chosenSkillIndex = 1;
         actionChosen = true;
     }
 }
