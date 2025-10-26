@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc11c4f687e729479b8f7971338b5bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  fighterName: 
   maxHealth: 100
   currentHealth: 0
   skills:
@@ -844,7 +844,7 @@ Animator:
   m_GameObject: {fileID: 598423733}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a763b713d5e0d814097db6188840a760, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7b9204a3bbbb2e84fab249915244d61e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1644,7 +1644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc11c4f687e729479b8f7971338b5bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: 
+  fighterName: 
   maxHealth: 100
   currentHealth: 0
   skills:

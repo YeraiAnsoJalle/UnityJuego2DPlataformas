@@ -25,7 +25,7 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        // Configurar barras de vida
+        // Configurar barras de vida SIN restaurar la vida del jugador
         playerHealthBar.maxValue = player.maxHealth;
         enemyHealthBar.maxValue = enemy.maxHealth;
         UpdateUI();
@@ -126,7 +126,7 @@ public class BattleManager : MonoBehaviour
         {
             battleText.text = "¡Has ganado!";
 
-            // ✅ Guardar enemigo como derrotado en esta sesión
+            // Guardar enemigo como derrotado en esta sesión
             if (BattleData.enemyToLoad != null && !string.IsNullOrEmpty(BattleData.enemyToLoad.uniqueID))
             {
                 BattleSessionData.defeatedEnemies.Add(BattleData.enemyToLoad.uniqueID);
@@ -137,6 +137,9 @@ public class BattleManager : MonoBehaviour
             battleText.text = "Has sido derrotado...";
         }
 
+        // Guardar vida actual del jugador para mantenerla entre combates
+        PlayerData.currentHealth = player.currentHealth;
+
         StartCoroutine(ReturnToMap());
     }
 
@@ -144,19 +147,35 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
 
+        // Suscribirse al evento de carga de escena
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         SceneManager.LoadScene("Juego"); // tu escena del mapa
-        SceneLoader.OnSceneLoaded += RestorePlayerPosition;
     }
 
-    private void RestorePlayerPosition()
+    // =======================
+    // Restaurar posición y vida del jugador
+    // =======================
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name != "Juego") return;
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
+            // Restaurar posición
             playerObj.transform.position = PlayerPositionManager.lastPosition;
+
+            // Restaurar vida
+            Character playerChar = playerObj.GetComponent<Character>();
+            if (playerChar != null)
+            {
+                playerChar.currentHealth = PlayerData.currentHealth;
+            }
         }
 
-        SceneLoader.OnSceneLoaded -= RestorePlayerPosition;
+        // Desuscribirse del evento
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     // =======================
@@ -174,3 +193,4 @@ public class BattleManager : MonoBehaviour
         actionChosen = true;
     }
 }
+

@@ -122,6 +122,152 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &473926886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1107217095558070148, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+  m_PrefabInstance: {fileID: 1529130613}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &473926887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473926886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ad1044da3d269b43b472f9876b8cbc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyName: Slime
+  maxHealth: 50
+  attackPower: 10
+  uniqueID: slime_02
+  battleSceneName: Pelea
+--- !u!61 &473926888
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473926886}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.46658707, y: -1.665959}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 13.33, y: 9.36}
+    newSize: {x: 13.33, y: 9.36}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 4.071659, y: 3.0120056}
+  m_EdgeRadius: 0
+--- !u!1001 &1529130613
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1107217095558070148, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_Name
+      value: Slime (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_Size.y
+      value: 2.9966097
+      objectReference: {fileID: 0}
+    - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.6685243
+      objectReference: {fileID: 0}
+    - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 39.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.35272345
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3621450360600883004, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1107217095558070148, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 473926888}
+    - targetCorrespondingSourceObject: {fileID: 1107217095558070148, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 473926887}
+  m_SourcePrefab: {fileID: 100100000, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
 --- !u!1 &1662394106 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1107217095558070148, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
@@ -159,7 +305,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.46658707, y: -1.7053287}
+  m_Offset: {x: -0.46658707, y: -1.6893545}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -170,7 +316,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.071659, y: 3.090745}
+  m_Size: {x: 4.071659, y: 3.0587966}
   m_EdgeRadius: 0
 --- !u!114 &1662394113
 MonoBehaviour:
@@ -187,8 +333,8 @@ MonoBehaviour:
   enemyName: Slime
   maxHealth: 50
   attackPower: 10
-  battleSceneName: Pelea
   uniqueID: slime_01
+  battleSceneName: Pelea
 --- !u!1 &1717119670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,11 +1369,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2800958815136793098, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.64
+      value: 2.2
       objectReference: {fileID: 0}
     - target: {fileID: 2800958815136793098, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.12
+      value: -4.7
       objectReference: {fileID: 0}
     - target: {fileID: 2800958815136793098, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1261,6 +1407,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4186549389610053976, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
+      propertyPath: m_Size.y
+      value: 7.1497736
+      objectReference: {fileID: 0}
+    - target: {fileID: 4186549389610053976, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.44178915
+      objectReference: {fileID: 0}
     - target: {fileID: 4563193349860751626, guid: 3fc111ec86f64014388423a018f1e0bf, type: 3}
       propertyPath: m_Name
       value: Jugador
@@ -1288,11 +1442,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_Size.y
-      value: 3.1765869
+      value: 3.0487928
       objectReference: {fileID: 0}
     - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_Offset.y
-      value: -1.7585129
+      value: -1.6946158
       objectReference: {fileID: 0}
     - target: {fileID: 2596497973087740759, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_IsTrigger
@@ -1300,11 +1454,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.9
+      value: 29.9
       objectReference: {fileID: 0}
     - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.2
+      value: -4.8
       objectReference: {fileID: 0}
     - target: {fileID: 2674895527010300740, guid: 4d18094bc826de143ad4e3d16cd322af, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1360,3 +1514,4 @@ SceneRoots:
   - {fileID: 4074558954151137968}
   - {fileID: 1914018237}
   - {fileID: 8595948842639681214}
+  - {fileID: 1529130613}

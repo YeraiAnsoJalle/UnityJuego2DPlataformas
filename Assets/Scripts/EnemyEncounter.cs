@@ -7,7 +7,7 @@ public class EnemyEncounter : MonoBehaviour
     public string enemyName;
     public int maxHealth = 100;
     public int attackPower = 10;
-    public string uniqueID; // Cada enemigo debe tener un ID único (por ejemplo: "enemy_001")
+    public string uniqueID; // ID único para cada enemigo
 
     [Header("Escena de batalla")]
     public string battleSceneName = "BattleScene";
@@ -16,11 +16,10 @@ public class EnemyEncounter : MonoBehaviour
 
     private void Start()
     {
-        // ✅ Si el enemigo fue derrotado en esta sesión, desaparece
+        // Si el enemigo ya fue derrotado en esta sesión, desaparece
         if (BattleSessionData.defeatedEnemies.Contains(uniqueID))
         {
             Destroy(gameObject);
-            return;
         }
     }
 
@@ -32,15 +31,16 @@ public class EnemyEncounter : MonoBehaviour
         {
             triggered = true;
 
-            // ✅ Guardar posición del jugador antes de entrar a combate
+            // Guardar posición del jugador antes de la batalla
             PlayerPositionManager.lastPosition = other.transform.position;
 
             // Guardar datos del enemigo para la batalla
             BattleData.enemyToLoad = new EnemyData(enemyName, maxHealth, attackPower, uniqueID);
 
-            // Cambiar a la escena de batalla
+            // Cargar la escena de batalla
             SceneManager.LoadScene(battleSceneName);
         }
     }
 }
+
 
