@@ -5,14 +5,16 @@ using System.Collections.Generic;
 public class Character : MonoBehaviour
 {
     [Header("Datos del personaje")]
-    public string fighterName; // 🔹 <---- añade esta línea
+    public string fighterName;
     public int maxHealth = 100;
     public int currentHealth;
     public List<Skill> skills = new List<Skill>();
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        // Solo inicializar si no hay datos guardados
+        if (currentHealth <= 0)
+            currentHealth = maxHealth;
     }
 
     public void TakeDamage(int amount)

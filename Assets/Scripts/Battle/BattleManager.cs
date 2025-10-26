@@ -25,7 +25,32 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-        // Configurar barras de vida SIN restaurar la vida del jugador
+        // Cargar vida del jugador desde datos guardados
+        if (PlayerData.currentHealth > 0)
+        {
+            player.currentHealth = PlayerData.currentHealth;
+        }
+
+        // Cargar datos del enemigo desde BattleData
+        if (BattleData.enemyToLoad != null)
+        {
+            enemy.fighterName = BattleData.enemyToLoad.name;
+            enemy.maxHealth = BattleData.enemyToLoad.maxHealth;
+            enemy.currentHealth = BattleData.enemyToLoad.maxHealth;
+
+            // Añadir skill de ataque básico al enemigo si no tiene
+            if (enemy.skills.Count == 0)
+            {
+                enemy.skills.Add(new Skill
+                {
+                    skillName = "Ataque",
+                    power = BattleData.enemyToLoad.attackPower,
+                    isHealing = false
+                });
+            }
+        }
+
+        // Configurar barras de vida
         playerHealthBar.maxValue = player.maxHealth;
         enemyHealthBar.maxValue = enemy.maxHealth;
         UpdateUI();
@@ -94,6 +119,13 @@ public class BattleManager : MonoBehaviour
         battleText.text = "Turno del enemigo";
         yield return new WaitForSeconds(1f);
 
+        // Verificar que el enemigo tenga skills
+        if (enemy.skills == null || enemy.skills.Count == 0)
+        {
+            battleText.text = "Enemigo no tiene habilidades";
+            yield break;
+        }
+
         bool willHeal = Random.value < 0.3f && enemy.currentHealth < enemy.maxHealth / 2;
 
         if (willHeal)
@@ -117,9 +149,6 @@ public class BattleManager : MonoBehaviour
         enemyHealthBar.value = enemy.currentHealth;
     }
 
-    // =======================
-    // Fin de la batalla
-    // =======================
     private void EndBattle()
     {
         if (state == BattleState.WON)
@@ -153,9 +182,6 @@ public class BattleManager : MonoBehaviour
         SceneManager.LoadScene("Juego"); // tu escena del mapa
     }
 
-    // =======================
-    // Restaurar posición y vida del jugador
-    // =======================
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != "Juego") return;
@@ -193,4 +219,3 @@ public class BattleManager : MonoBehaviour
         actionChosen = true;
     }
 }
-

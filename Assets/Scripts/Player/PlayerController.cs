@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class PlayerController2D : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
     public float moveSpeed = 12f;
     public float jumpForce = 12f;
-    public float fallMultiplier = 3f;     // Caída más rápida
-    public float lowJumpMultiplier = 2f;  // Salto más bajo si sueltas el botón
+    public float fallMultiplier = 3f;
+    public float lowJumpMultiplier = 2f;
 
     private float moveInput;
     private bool isGrounded;
@@ -35,11 +35,9 @@ public class PlayerController2D : MonoBehaviour
         moveInput = Input.GetAxisRaw("Horizontal");
         rb.AddForce(new Vector2(moveInput * 50f, 0));
 
-        // Limitar velocidad horizontal
         if (Mathf.Abs(rb.velocity.x) > moveSpeed)
             rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * moveSpeed, rb.velocity.y);
 
-        // Voltear sprite según dirección
         if (moveInput > 0) transform.localScale = new Vector3(1, 1, 1);
         else if (moveInput < 0) transform.localScale = new Vector3(-1, 1, 1);
     }
@@ -57,12 +55,10 @@ public class PlayerController2D : MonoBehaviour
     {
         if (rb.velocity.y < 0)
         {
-            // Caída más rápida
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
         else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
         {
-            // Saltos más bajos si sueltas el botón
             rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
     }
